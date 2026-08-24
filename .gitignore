@@ -12,4 +12,4 @@ __pycache__/
 .DS_Store
 
 # Local sample and preview images
-sample_images
+sample_images/
