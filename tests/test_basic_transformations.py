@@ -1,6 +1,7 @@
+import pytest
 from PIL import Image
 
-from painting_lab.basic_transformations import mirror_image, grayscale_image
+from painting_lab.basic_transformations import mirror_image, grayscale_image, create_value_study
 
 
 def test_mirror_image_preserves_size():
@@ -57,3 +58,39 @@ def test_grayscale_image_converts_pixels():
     
     assert isinstance(pixel, int)
     assert 0 <= pixel <= 255
+    
+    
+def test_value_study_preserves_size():
+    image = Image.new("RGB", (100, 50), "red")
+    
+    result = create_value_study(image, levels=3)
+    
+    assert result.size == (100, 50)
+    
+    
+def test_value_study_returns_grayscale_image():
+    image = Image.new("RGB", (100, 50), "red")
+    
+    result = create_value_study(image, levels=3)
+    
+    assert result.mode == "L"
+    
+    
+def test_value_study_reduces_number_of_values():
+    image = Image.new("L", (256, 1))
+    
+    for x in range(256):
+        image.putpixel((x, 0), x)
+    
+    result = create_value_study(image, levels=3)
+    
+    values = set(result.get_flattened_data())
+    
+    assert len(values) <= 3
+    
+    
+def test_value_study_rejects_too_few_levels():
+    image = Image.new("RGB", (10, 10), "red")
+    
+    with pytest.raises(ValueError):
+        create_value_study(image, levels=1)
