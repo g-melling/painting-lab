@@ -43,3 +43,4 @@ def test_save_image_creates_file(tmp_path):
     
     assert saved_image.size == (50, 50)
     assert saved_image.mode == "RGB"
+    
