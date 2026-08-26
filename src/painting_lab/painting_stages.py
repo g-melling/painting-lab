@@ -1,7 +1,11 @@
 from PIL import Image, ImageFilter, ImageOps
 
 
-def create_grisaille(image: Image.Image) -> Image.Image:
+def create_grisaille(
+    image: Image.Image,
+    tones: int = 8,
+) -> Image.Image:
+    
     grayscale = ImageOps.grayscale(image)
     
     # Softens fine photographic details
@@ -9,6 +13,6 @@ def create_grisaille(image: Image.Image) -> Image.Image:
     
     # Slightly reduces number of tonal steps, removes too much fine detail
     # Improvement on 3/5 value study
-    grisaille = softened.quantize(colors=8).convert("L")
+    grisaille = softened.quantize(colors=tones).convert("L")
     
     return grisaille

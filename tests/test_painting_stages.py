@@ -17,4 +17,19 @@ def test_grisaille_returns_grayscale_image():
     result = create_grisaille(image)
     
     assert result.mode == "L"
+
+
+def test_grisaille_reduces_tonal_values():
+    image = Image.new("L", (256, 1))
+    
+    for x in range(256):
+        image.putpixel((x, 0), x)
+        
+    image = image.convert("RGB")
+    
+    result = create_grisaille(image)
+    
+    values = set(result.get_flattened_data())
+    
+    assert len(values) <= 8
     
