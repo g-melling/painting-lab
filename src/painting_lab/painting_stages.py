@@ -42,3 +42,61 @@ def create_imprimatura(
     )
     
     return imprimatura
+
+
+def create_verdaccio(
+    image: Image.Image,
+    tones: int=8,
+) -> Image.Image:
+    
+    grisaille = create_grisaille(image, tones=tones)
+    
+    verdaccio = ImageOps.colorize(
+        grisaille,
+        black=(45, 75, 35),
+        white=(245, 245, 235),
+    )
+    
+    return verdaccio
+    
+    
+def create_colour_block_in(
+    image: Image.Image,
+    colours: int = 8,
+) -> Image.Image:
+    
+    rgb_image = image.convert("RGB")
+    
+    block_in = rgb_image.quantize(colors=colours).convert("RGB")
+    
+    return block_in
+
+
+def extract_palette(
+    image: Image.Image,
+    colours: int=8,
+) -> list[tuple[int, int, int]]:
+    
+    rgb_image = image.convert("RGB")
+    
+    quantized = rgb_image.quantize(colors=colours)
+    
+    palette = quantized.getpalette()
+    
+    colour_counts = quantized.getcolors()
+    
+    if palette is None or colour_counts is None:
+        return []
+    
+    extracted_colours = []
+    
+    for count, colour_index in colour_counts:
+        start = colour_index * 3
+        
+        colour = tuple(palette[start:start+3])
+        
+        extracted_colours.append((count, colour))
+        
+    extracted_colours.sort(key=lambda item: item[0], reverse=True)
+    
+    return [colour for _, colour in extracted_colours]
