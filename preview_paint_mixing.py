@@ -10,12 +10,22 @@ palette = extract_palette(
     colours=8,
 )
 
-print("Paint Mixing Suggestions:")
+print("Paint Mixing Suggestions:\n")
+
+for colour in palette:
+    mix = suggest_paint_mix(colour)
+    
+    print(f"Target colour: {colour}")
+    print(f"Category: {mix.name}")
+    print(f"Suggested mix: {mix.suggestion}")
+    print()
 
 
+"""
 mix = suggest_paint_mix(
     (170, 120, 80)
 )
 
 print(mix.name)
 print(mix.suggestion)
+"""
