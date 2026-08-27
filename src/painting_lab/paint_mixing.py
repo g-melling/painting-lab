@@ -42,6 +42,15 @@ STUDENT_PALETTE = [
         (240, 190, 40),
     ),
 ]
+
+
+MIXING_RATIOS = [
+    (1, 1),
+    (2, 1),
+    (1, 2),
+    (3, 1),
+    (1, 3),
+]
     
 """
 PAINT_MIXES = [
@@ -99,7 +108,7 @@ def colour_distance(
         (a - b) ** 2
         for a, b in zip(colour_a, colour_b)
     ) ** 0.5
-    
+      
    
 def find_closest_paint(
     target_colour: tuple[int, int, int],
@@ -117,11 +126,14 @@ def find_closest_paint(
 def mix_two_colours(
     colour_a: tuple[int, int, int],
     colour_b: tuple[int, int, int],
+    parts_a: int = 1,
+    parts_b: int = 1,
 ) -> tuple[int, int, int]:
     
+    total_parts = parts_a + parts_b
+    
     return tuple(
-        int((a + b) / 2)
-        for a, b in zip(colour_a, colour_b)
+        int(((a * parts_a) + (b * parts_b)) / total_parts) for a, b in zip(colour_a, colour_b)
     )
 
 
@@ -129,39 +141,42 @@ def find_closest_two_paint_mix(
     target_colour: tuple[int, int, int],
 ):
     best_paints = None
+    best_ratio = None
     best_colour = None
     best_distance = float("inf")
-    
+
     for index, paint_a in enumerate(STUDENT_PALETTE):
         for paint_b in STUDENT_PALETTE[index + 1:]:
-            
-            mixed_colour = mix_two_colours(
-                paint_a.rgb,
-                paint_b.rgb,
-            )
-            
-            distance = colour_distance(
-                target_colour,
-                mixed_colour,
-            )
-            
-            if distance < best_distance:
-                best_distance = distance
-                best_paints = (paint_a, paint_b)
-                best_colour = mixed_colour
-                
-    return best_paints, best_colour, best_distance
 
-"""
-def suggest_paint_mix(
-    target_colour: tuple[int, int, int],
-) -> PaintMix:
-    
-    return min(
-        PAINT_MIXES,
-        key=lambda mix: colour_distance(
-            target_colour,
-            mix.rgb
-        ),
+            for parts_a, parts_b in MIXING_RATIOS:
+
+                mixed_colour = mix_two_colours(
+                    paint_a.rgb,
+                    paint_b.rgb,
+                    parts_a,
+                    parts_b,
+                )
+
+                distance = colour_distance(
+                    target_colour,
+                    mixed_colour,
+                )
+
+                if distance < best_distance:
+                    best_distance = distance
+                    best_paints = (
+                        paint_a,
+                        paint_b,
+                    )
+                    best_ratio = (
+                        parts_a,
+                        parts_b,
+                    )
+                    best_colour = mixed_colour
+
+    return (
+        best_paints,
+        best_ratio,
+        best_colour,
+        best_distance,
     )
-"""

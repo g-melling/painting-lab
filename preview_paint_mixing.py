@@ -14,15 +14,16 @@ print("Paint Mix Suggestions:\n")
 for colour in palette:
     single_paint = find_closest_paint(colour)
     
-    paints, mixed_colour, distance = find_closest_two_paint_mix(colour)
+    paints, ratio, mixed_colour, distance = find_closest_two_paint_mix(colour)
     
     print(f"Target colour: {colour}")
     print(f"Closest single paint: {single_paint.name}")
     print()
     
-    print(f"Closest 1:1 mixture: {paints[0].name} + {paints[1].name}")
+    print("Suggested two-paint mixture:")
+    print(f"  {ratio[0]} part(s) {paints[0].name}")
+    print(f"  {ratio[1]} part(s) {paints[1].name}")
     print()
-    
+
     print(f"Estimated mixed colour: {mixed_colour}")
     print()
-    
