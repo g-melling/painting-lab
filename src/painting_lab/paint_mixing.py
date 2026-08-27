@@ -50,6 +50,39 @@ MIXING_RATIOS = [
     (1, 2),
     (3, 1),
     (1, 3),
+    (2, 3),
+    (3, 2),
+]
+
+
+THREE_PAINT_RATIOS = [
+    (1, 1, 1),
+    (1, 1, 2),
+    (1, 1, 3),
+    (1, 2, 1),
+    (1, 2, 2),
+    (1, 2, 3),
+    (1, 3, 1),
+    (1, 3, 2),
+    (1, 3, 3),
+    (2, 1, 1),
+    (2, 1, 2),
+    (2, 1, 3),
+    (2, 2, 1),
+    (2, 2, 2),
+    (2, 2, 3),
+    (2, 3, 1),
+    (2, 3, 2),
+    (2, 3, 3),
+    (3, 1, 1),
+    (3, 1, 2),
+    (3, 1, 3),
+    (3, 2, 1),
+    (3, 2, 2),
+    (3, 2, 3),
+    (3, 3, 1),
+    (3, 3, 2),
+    (3, 3, 3),
 ]
     
 """
@@ -135,6 +168,22 @@ def mix_two_colours(
     return tuple(
         int(((a * parts_a) + (b * parts_b)) / total_parts) for a, b in zip(colour_a, colour_b)
     )
+    
+    
+def mix_three_colours(
+    colour_a: tuple[int, int, int],
+    colour_b: tuple[int, int, int],
+    colour_c: tuple[int, int, int],
+    parts_a: int = 1,
+    parts_b: int = 1,
+    parts_c: int = 1,
+) -> tuple[int, int, int]:
+    
+    total_parts = parts_a + parts_b + parts_c
+    
+    return tuple(
+    int((a * parts_a) + (b * parts_b) + (c * parts_c) / total_parts) for a, b, c in zip(colour_a, colour_b, colour_c)
+    )
 
 
 def find_closest_two_paint_mix(
@@ -180,3 +229,121 @@ def find_closest_two_paint_mix(
         best_colour,
         best_distance,
     )
+    
+def find_closest_three_paint_mix(
+    target_colour: tuple[int, int, int],
+):
+    best_paints = None
+    best_ratio = None
+    best_colour = None
+    best_distance = float("inf")
+
+    for first_index, paint_a in enumerate(STUDENT_PALETTE):
+
+        for second_index in range(
+            first_index + 1,
+            len(STUDENT_PALETTE),
+        ):
+            paint_b = STUDENT_PALETTE[second_index]
+
+            for third_index in range(
+                second_index + 1,
+                len(STUDENT_PALETTE),
+            ):
+                paint_c = STUDENT_PALETTE[third_index]
+
+                for ratio in THREE_PAINT_RATIOS:
+                    parts_a, parts_b, parts_c = ratio
+
+                    mixed_colour = mix_three_colours(
+                        paint_a.rgb,
+                        paint_b.rgb,
+                        paint_c.rgb,
+                        parts_a,
+                        parts_b,
+                        parts_c,
+                    )
+
+                    distance = colour_distance(
+                        target_colour,
+                        mixed_colour,
+                    )
+
+                    if distance < best_distance:
+                        best_distance = distance
+                        best_paints = (
+                            paint_a,
+                            paint_b,
+                            paint_c,
+                        )
+                        best_ratio = ratio
+                        best_colour = mixed_colour
+
+    return (
+        best_paints,
+        best_ratio,
+        best_colour,
+        best_distance,
+    )
+
+
+def find_best_paint_mix(
+    target_colour: tuple[int, int, int],
+):
+    # Find closest single paint
+    single_paint = find_closest_paint(
+        target_colour
+    )
+
+    single_distance = colour_distance(
+        target_colour,
+        single_paint.rgb,
+    )
+
+    # Find closest two-paint mixture
+    (
+        two_paints,
+        two_ratio,
+        two_colour,
+        two_distance,
+    ) = find_closest_two_paint_mix(
+        target_colour
+    )
+
+    # Find closest three-paint mixture
+    (
+        three_paints,
+        three_ratio,
+        three_colour,
+        three_distance,
+    ) = find_closest_three_paint_mix(
+        target_colour
+    )
+
+    # Compare all three
+    if (
+        single_distance <= two_distance
+        and single_distance <= three_distance
+    ):
+        return (
+            (single_paint,),
+            (1,),
+            single_paint.rgb,
+            single_distance,
+        )
+
+    elif two_distance <= three_distance:
+        return (
+            two_paints,
+            two_ratio,
+            two_colour,
+            two_distance,
+        )
+
+    else:
+        return (
+            three_paints,
+            three_ratio,
+            three_colour,
+            three_distance,
+        )
