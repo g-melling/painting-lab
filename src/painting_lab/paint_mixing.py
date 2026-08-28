@@ -1,3 +1,6 @@
+import cv2
+import numpy as np
+
 from typing import NamedTuple
 
 
@@ -136,10 +139,28 @@ def colour_distance(
     colour_a: tuple[int, int, int],
     colour_b: tuple[int, int, int],
 ) -> float:
-    
+
+    colour_a_array = np.uint8(
+        [[colour_a]]
+    )
+
+    colour_b_array = np.uint8(
+        [[colour_b]]
+    )
+
+    lab_a = cv2.cvtColor(
+        colour_a_array,
+        cv2.COLOR_RGB2LAB,
+    )[0][0]
+
+    lab_b = cv2.cvtColor(
+        colour_b_array,
+        cv2.COLOR_RGB2LAB,
+    )[0][0]
+
     return sum(
-        (a - b) ** 2
-        for a, b in zip(colour_a, colour_b)
+        (int(a) - int(b)) ** 2
+        for a, b in zip(lab_a, lab_b)
     ) ** 0.5
       
    
@@ -178,11 +199,23 @@ def mix_three_colours(
     parts_b: int = 1,
     parts_c: int = 1,
 ) -> tuple[int, int, int]:
-    
+
     total_parts = parts_a + parts_b + parts_c
-    
+
     return tuple(
-    int((a * parts_a) + (b * parts_b) + (c * parts_c) / total_parts) for a, b, c in zip(colour_a, colour_b, colour_c)
+        int(
+            (
+                a * parts_a
+                + b * parts_b
+                + c * parts_c
+            )
+            / total_parts
+        )
+        for a, b, c in zip(
+            colour_a,
+            colour_b,
+            colour_c,
+        )
     )
 
 
