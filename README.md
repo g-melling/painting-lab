@@ -62,10 +62,10 @@ PaintPal currently contains several experimental approaches to generating line d
 
 These include:
 
-Original Line Drawing
-Detailed Line Drawing
-Simple Line Drawing
-Value-Based Line Drawing
+- Original Line Drawing
+- Detailed Line Drawing
+- Simple Line Drawing
+- Value-Based Line Drawing
 
 ## Traditional Painting Stages
 
@@ -138,9 +138,9 @@ The palette is intended to provide the student with clear colour targets rather 
 
 ## Paint Mixing Guide
 
-Painting Lab is also developing an experimental paint-mixing assistant.
+The application also contains an experimental paint-mixing assistant.
 
-A basic student palette is currently defined using common painting colours such as:
+A basic student palette is currently defined using common painting colours:
 
 - Titanium White;
 - Yellow Ochre;
